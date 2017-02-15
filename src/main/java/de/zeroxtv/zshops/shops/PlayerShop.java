@@ -49,6 +49,12 @@ public class PlayerShop implements Shop {
         return null;
     }
 
+    public void addOffer(ItemOffer offer) {
+        if (offers.size()<54) {
+            offers.add(offer);
+        }
+    }
+
     public void setOffers(ArrayList<ItemOffer> offers) {
         this.offers = offers;
     }
@@ -58,6 +64,7 @@ public class PlayerShop implements Shop {
         ArrayList<String> tasks = new ArrayList<>();
         tasks.add(String.format("INSERT OR REPLACE INTO Shops (Name,Owner) VALUES ('%S','%s')", name, owner));
         tasks.add(String.format("CREATE TABLE IF NOT EXISTS %s (Id VARCHAR(3) PRIMARY KEY, Item VARCHAR(200)"));
+        sql.executeArray(tasks);
         for (ItemOffer offer : offers) {
             offer.save();
         }
@@ -70,10 +77,25 @@ public class PlayerShop implements Shop {
         return shop;
     }
 
+    public static PlayerShop getByName(String name) {
+        for (PlayerShop shop : shops) {
+            if (shop.name.equalsIgnoreCase(name)) {
+                return shop;
+            }
+        }
+        return null;
+    }
+
     public static void loadAll() throws SQLException {
         ResultSet resultSet = ZShops.sqlLibrary.executeQuery("SELECT * FROM Shops");
         while (resultSet.next()) {
             shops.add(loadFromSQL(resultSet));
+        }
+    }
+
+    public static void saveAll() {
+        for (PlayerShop shop : shops) {
+            shop.saveToSQL();
         }
     }
 
