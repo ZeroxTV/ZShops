@@ -1,0 +1,8 @@
+name: ZShops
+version: ${project.version}
+main: de.zeroxtv.zshops.ZShops
+prefix: ZShops
+load: STARTUP
+depend: [Vault]
+authors: [ZeroxTV]
+description: A new awesome shop plugin
