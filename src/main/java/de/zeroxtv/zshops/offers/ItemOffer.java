@@ -1,7 +1,7 @@
 package de.zeroxtv.zshops.offers;
 
+import de.zeroxtv.zcore.SQL.MySQL;
 import de.zeroxtv.zshops.ZShops;
-import de.zeroxtv.zshops.configuration.SQLLibrary;
 import de.zeroxtv.zshops.shops.Shop;
 import de.zeroxtv.zshops.util.CardboardBox;
 import net.milkbowl.vault.economy.Economy;
@@ -66,10 +66,10 @@ public class ItemOffer implements Offer {
     @Override
     public void save() {
         try {
-            SQLLibrary sql = ZShops.sqlLibrary;
+            MySQL sql = ZShops.mySQL;
             CardboardBox cbb = new CardboardBox(item);
             String serialized = cbb.encode();
-            sql.execute(String.format("INSERT OR REPLACE INTO %s (Item,Price,Stock) VALUES ('%s','%s','%d','%d')", shop.getName(), serialized, price, stock));
+            sql.execute(String.format("REPLACE INTO %s (Item,Price,Stock) VALUES ('%s','%d','%d')", shop.getName(), serialized, price, stock));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,7 +77,7 @@ public class ItemOffer implements Offer {
 
     public static ArrayList<ItemOffer> load(Shop shop) {
         try {
-            SQLLibrary sql = ZShops.sqlLibrary;
+            MySQL sql = ZShops.mySQL;
             ResultSet rs = sql.executeQuery(String.format("SELECT * FROM %s", shop.getName()));
             ArrayList<ItemOffer> items = new ArrayList<>();
             while (rs.next()) {

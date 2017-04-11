@@ -1,9 +1,9 @@
 package de.zeroxtv.zshops.shops;
 
+import de.zeroxtv.zcore.SQL.MySQL;
 import de.zeroxtv.zmenu.Menu;
 import de.zeroxtv.zmenu.clickables.ClickButton;
 import de.zeroxtv.zshops.ZShops;
-import de.zeroxtv.zshops.configuration.SQLLibrary;
 import de.zeroxtv.zshops.offers.ItemOffer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +26,7 @@ public class PlayerShop implements Shop {
     public PlayerShop(UUID owner, String name) {
         this.owner = owner;
         this.name = name;
+        saveToSQL();
     }
 
     public void open(Player player) {
@@ -60,10 +61,10 @@ public class PlayerShop implements Shop {
     }
 
     public void saveToSQL() {
-        SQLLibrary sql = ZShops.sqlLibrary;
+        MySQL sql = ZShops.mySQL;
         ArrayList<String> tasks = new ArrayList<>();
-        tasks.add(String.format("INSERT OR REPLACE INTO Shops (Name,Owner) VALUES ('%S','%s')", name, owner));
-        tasks.add(String.format("CREATE TABLE IF NOT EXISTS %s (Id VARCHAR(3) PRIMARY KEY, Item VARCHAR(200)"));
+        tasks.add(String.format("REPLACE INTO Shops (Name,Owner) VALUES ('%s','%s')", name, owner));
+        tasks.add(String.format("CREATE TABLE IF NOT EXISTS %s (Id VARCHAR(3) PRIMARY KEY, Item VARCHAR(200))", name));
         sql.executeArray(tasks);
         for (ItemOffer offer : offers) {
             offer.save();
@@ -73,7 +74,7 @@ public class PlayerShop implements Shop {
     public static PlayerShop loadFromSQL(ResultSet resultSet) throws SQLException {
         UUID owner = UUID.fromString(resultSet.getString("Owner"));
         PlayerShop shop = new PlayerShop(owner, resultSet.getString("Name"));
-        shop.setOffers(ItemOffer.load(shop));
+        //shop.setOffers(ItemOffer.load(shop));
         return shop;
     }
 
@@ -87,9 +88,9 @@ public class PlayerShop implements Shop {
     }
 
     public static void loadAll() throws SQLException {
-        ResultSet resultSet = ZShops.sqlLibrary.executeQuery("SELECT * FROM Shops");
-        while (resultSet.next()) {
-            shops.add(loadFromSQL(resultSet));
+        ResultSet rs = ZShops.mySQL.executeQuery("SELECT * FROM Shops");
+        while (rs.next()) {
+            shops.add(loadFromSQL(rs));
         }
     }
 

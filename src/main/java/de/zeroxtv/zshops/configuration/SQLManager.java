@@ -1,5 +1,6 @@
 package de.zeroxtv.zshops.configuration;
 
+import de.zeroxtv.zcore.SQL.MySQL;
 import de.zeroxtv.zshops.ZShops;
 
 import java.util.ArrayList;
@@ -9,11 +10,14 @@ import java.util.ArrayList;
  */
 public class SQLManager {
     public static void initializeDB() {
-        ArrayList<String> commands = new ArrayList<>();
+        MySQL sql = ZShops.mySQL;
 
-        commands.add("CREATE TABLE IF NOT EXISTS Shops (" +
-                "Owner VARCHAR(100), " +
-                "Name VARCHAR(100) PRIMARY KEY)");
-        ZShops.sqlLibrary.executeArray(commands);
+        sql.execute("CREATE DATABASE IF NOT EXISTS ZShops");
+
+        sql.switchDatabase("ZShops");
+
+        sql.execute("CREATE TABLE IF NOT EXISTS Shops (" +
+                "Name VARCHAR(100) PRIMARY KEY," +
+                "Owner VARCHAR(100))");
     }
 }

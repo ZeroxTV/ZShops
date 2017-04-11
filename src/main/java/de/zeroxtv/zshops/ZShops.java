@@ -1,7 +1,7 @@
 package de.zeroxtv.zshops;
 
+import de.zeroxtv.zcore.SQL.MySQL;
 import de.zeroxtv.zshops.configuration.ConfigPath;
-import de.zeroxtv.zshops.configuration.SQLLibrary;
 import de.zeroxtv.zshops.configuration.SQLManager;
 import de.zeroxtv.zshops.shops.PlayerShop;
 import net.milkbowl.vault.economy.Economy;
@@ -15,7 +15,7 @@ public final class ZShops extends JavaPlugin {
 
     public static Economy economy;
     public static Logger logger;
-    public static SQLLibrary sqlLibrary;
+    public static MySQL mySQL;
 
     @Override
     public void onEnable() {
@@ -27,8 +27,8 @@ public final class ZShops extends JavaPlugin {
         }
 
         ConfigPath.createPath();
-        sqlLibrary = new SQLLibrary();
-        sqlLibrary.connect();
+        mySQL = new MySQL();
+        mySQL.connect("localhost", "root", "Admin123");
         SQLManager.initializeDB();
 
         try {
@@ -41,7 +41,7 @@ public final class ZShops extends JavaPlugin {
     @Override
     public void onDisable() {
         PlayerShop.saveAll();
-        sqlLibrary.disconnect();
+        mySQL.disconnect();
     }
 
     private boolean setupEconomy() {

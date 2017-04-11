@@ -3,6 +3,6 @@ version: ${project.version}
 main: de.zeroxtv.zshops.ZShops
 prefix: ZShops
 load: STARTUP
-depend: [Vault]
+depend: [Vault,ZCore]
 authors: [ZeroxTV]
 description: A new awesome shop plugin
